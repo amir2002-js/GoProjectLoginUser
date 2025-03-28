@@ -8,38 +8,31 @@ import (
 )
 
 func HandlerRegister(w http.ResponseWriter, r *http.Request) {
+
+	//If our method was "POST" the program execution would continue
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	//Creating a instance of new user
 	var user NewUser
+
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
+	//trim all value
 	user.Username = strings.TrimSpace(user.Username)
 	user.Password = strings.TrimSpace(user.Password)
 	user.ConfirmPassword = strings.TrimSpace(user.ConfirmPassword)
 	user.Email = strings.TrimSpace(user.Email)
 
-	if len(user.Email) < 6 {
-		http.Error(w, "Email too short", http.StatusBadRequest)
-		return
-	}
-
-	if len(user.Password) < 6 {
-		http.Error(w, "wrong password  should be +6 length ", http.StatusBadRequest)
-		return
-	}
-
-	if user.ConfirmPassword != user.Password {
-		http.Error(w, "wrong password noy match confirm password ", http.StatusBadRequest)
-		return
-	}
-
-	if len(user.Username) < 2 {
-		http.Error(w, " username is wrong ", http.StatusBadRequest)
+	//check values
+	err = CheckVal(user.Username, user.Password, user.ConfirmPassword, user.Email, &w)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 

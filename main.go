@@ -15,7 +15,7 @@ var users = map[string]NewUser{}
 
 func main() {
 	http.HandleFunc("/register", HandlerRegister)
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8980", nil)
 	if err != nil {
 		panic(err)
 	}
