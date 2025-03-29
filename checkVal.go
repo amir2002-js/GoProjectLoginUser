@@ -20,7 +20,7 @@ func CheckVal(userName, password, confirmPass, email string, w *http.ResponseWri
 	}
 
 	if confirmPass != password {
-		http.Error(*w, "wrong password noy match confirm password ", http.StatusBadRequest)
+		http.Error(*w, "wrong password not match confirm password ", http.StatusBadRequest)
 		err = errors.New("wrong password")
 		return err
 	}

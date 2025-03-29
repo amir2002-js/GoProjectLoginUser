@@ -9,18 +9,36 @@ import (
 
 func HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	//AI way
+	//origin := r.Header.Get("Origin")
+	//w.Header().Set("Access-Control-Allow-Origin", origin) // echo back the requesting origin
+	//w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	//w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	//my way
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	//w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	//If our method was "POST" the program execution would continue
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	//Creating a instance of new user
+	//Creating an instance of new user
 	var user NewUser
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	//trim all value
@@ -36,7 +54,8 @@ func HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if (users[user.Email] == NewUser{}) {
+	_, exist := users[user.Email]
+	if !exist {
 		users[user.Email] = user
 
 		w.WriteHeader(http.StatusCreated)
